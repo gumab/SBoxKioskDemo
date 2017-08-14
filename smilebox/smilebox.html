@@ -51,6 +51,29 @@
 		position: relative;
 	}
 
+    input.img_button {
+    	border: none;
+        cursor: pointer;
+    }
+
+	#btn0{
+		height: 100%;
+		width: 100%;
+		background:0;
+	}
+	#btn_wrap{
+		left: 50%;
+		transform: translate(-50%,-50%);
+		top:90%;
+		height: 10%;
+		width: auto;
+		position: relative;
+		background-size: contain;
+		background-image: url(kiosk_1_start.png);
+		background-repeat:no-repeat;
+		background-position-x: 50%;
+	}
+
 	</style>
 
 	<!--[if IE]>
@@ -77,8 +100,10 @@
 <body>
 
 <div id="fullpage">
-	<div class="section " id="section0">
-
+	<div class="section" id="section0">
+		<div id=btn_wrap>
+        	<input type="button" class="img_button" id="btn0">
+		</div>
 	</div>
 </div>
 
