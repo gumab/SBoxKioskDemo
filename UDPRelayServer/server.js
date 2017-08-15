@@ -1,33 +1,44 @@
 var dgram = require('dgram');
-function udpServer(){
- var port=9999;
- var host='0.0.0.0';
- var server=dgram.createSocket('udp4');
- server.on('listening',function(){
-  var address = server.address();
-  console.log('UDP Server listening on ' + address.address+':'+address.port);
- });
- server.on('message',function(message,remote){
-  console.log(remote.address+':'+remote.port+'-'+message);
-  //setInterval(sendAck(remote.address,remote.port),1000);
-  server.close();
-  sendAck(remote.address,remote.port)();
- });
- server.bind(port,host);
+var SERVER_HOST = '0.0.0.0';
+var SERVER_PORT = 9999;
+function udpServer() {
+  var server = dgram.createSocket('udp4');
+  server.on('listening', function () {
+    var address = server.address();
+    console.log('UDP Server listening on ' + address.address + ':' + address.port);
+  });
+  server.on('message', function (message, remote) {
+    //console.log(message.toString());
+    if (message.toString() == 'reg') {
+      send(server, remote.address, remote.port);
+    } else {
+      try {
+        var reqObj = JSON.parse(message.toString());
+        if (reqObj.target) {
+          send(server, reqObj.target.host, reqObj.target.port, reqObj.data);
+        }
+      } catch (e) {
+        console.log('Can\' Parse message');
+        console.log(message);
+      }
+    }
+  });
+  server.bind(SERVER_PORT, SERVER_HOST);
 }
 
-function sendAck(host, port){
-return function(){
-  var ack = new Buffer('ack');
-  var client  = dgram.createSocket('udp4');
-console.log(client);
-  client.bind(9999,'0.0.0.0');
-  client.send(ack,0,ack.length,port,host,function(err,bytes){
-    console.log(host+':'+port+' - message sent');
-    client.close();
+function send(client, host, port, data) {
+  if (!data) {
+    var ack = {
+      type: 'ack',
+      c_host: host,
+      c_port: port
+    };
+    data = ack
+  }
+  var message = new Buffer(JSON.stringify(data));
+  client.send(message, 0, message.length, port, host, function (err, bytes) {
+    console.log(host + ':' + port + ' - message sent');
   });
-  udpServer();
-}
 }
 
 udpServer();
