@@ -20,7 +20,7 @@ function udpServer() {
           send(server, reqObj.target.host, reqObj.target.port, reqObj.data);
         }
       } catch (e) {
-        console.log('Can\' Parse message');
+        console.log('Can\'t Parse message');
         console.log(message);
       }
     }
@@ -29,7 +29,7 @@ function udpServer() {
 }
 
 function send(client, host, port, data) {
-  client.close();
+  //client.close();
 
   if (!data) {
     var ack = {
@@ -40,14 +40,14 @@ function send(client, host, port, data) {
     data = ack
   }
 
-  client = dgram.createSocket('udp4');
-  client.bind(SERVER_PORT, SERVER_HOST);
+  //client = dgram.createSocket('udp4');
+  //client.bind(SERVER_PORT, SERVER_HOST);
 
   var message = new Buffer(JSON.stringify(data));
   client.send(message, 0, message.length, port, host, function (err, bytes) {
     console.log(host + ':' + port + ' - message sent');
-    client.close();
-    udpServer();
+    //client.close();
+    //udpServer();
   });
 }
 
