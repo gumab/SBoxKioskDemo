@@ -1,5 +1,5 @@
 var RELAY_PORT = 9999;
-var RELAY_HOST = '127.0.0.1';
+var RELAY_HOST = 'gumabae.iptime.org';
 var dgram = require('dgram');
 
 
