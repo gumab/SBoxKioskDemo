@@ -3,10 +3,12 @@ var SERVER_HOST = '0.0.0.0';
 var SERVER_PORT = 9999;
 function udpServer() {
   var server = dgram.createSocket('udp4');
+  /*
   server.on('listening', function () {
     var address = server.address();
     console.log('UDP Server listening on ' + address.address + ':' + address.port);
   });
+  */
   server.on('message', function (message, remote) {
     //console.log(message.toString());
     if (message.toString() == 'reg') {
@@ -27,6 +29,8 @@ function udpServer() {
 }
 
 function send(client, host, port, data) {
+  client.close();
+
   if (!data) {
     var ack = {
       type: 'ack',
@@ -35,9 +39,15 @@ function send(client, host, port, data) {
     };
     data = ack
   }
+
+  client = dgram.createSocket('udp4');
+  client.bind(SERVER_PORT, SERVER_HOST);
+
   var message = new Buffer(JSON.stringify(data));
   client.send(message, 0, message.length, port, host, function (err, bytes) {
     console.log(host + ':' + port + ' - message sent');
+    client.close();
+    udpServer();
   });
 }
 
